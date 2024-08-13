@@ -77,6 +77,14 @@ RUN \
   apt clean -y && \
   rm -rf /var/lib/apt/lists/*
 
+RUN a2enmod remoteip && \
+  #sed -E -i 's/(LogFormat.+)%h(.+)/\1%a\2/g' /etc/apache2/apache2.conf && \
+  #sed -E -i 's/(LogFormat.+)%h(.+)/\1%{X-Forwarded-For}i\2/g' /etc/apache2/apache2.conf && \
+  echo 'RemoteIPHeader X-Real-Ip' >> /etc/apache2/conf-available/remoteip.conf && \
+  echo 'RemoteIPHeader X-Client-Ip' >> /etc/apache2/conf-available/remoteip.conf && \
+  echo 'RemoteIPInternalProxy 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8' >> /etc/apache2/conf-available/remoteip.conf && \
+  a2enconf remoteip
+
 RUN mkdir -p /defaults/ && \
  mv /var/www/html/upload /defaults/
 
