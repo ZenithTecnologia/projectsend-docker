@@ -8,7 +8,7 @@ RUN docker-php-ext-install -j$(nproc) pdo_mysql
 RUN \
   apt update && \ 
   apt install -y jq catatonit unzip && \
-
+\
   if [ -z ${PROJECTSEND_VERSION+x} ]; then \
     PROJECTSEND_VERSION=$(curl -s https://api.github.com/repos/projectsend/projectsend/releases/latest | jq -r '. | .tag_name'); \
   fi && \
@@ -21,7 +21,12 @@ RUN \
   unzip \
     /tmp/projectsend.zip -d \
     /var/www/html && \
-
+\
+  for lang in zh_CN cs nl fr de it_IT pl pt_BR ru es sw tr vi_VN; do \
+    curl -fso /tmp/${lang}.zip -L "https://www.projectsend.org/translations/get.php?lang=${lang}" && \
+    unzip -o /tmp/${lang}.zip -d /var/www/html ; \
+  done && \
+\
   chown -R www-data:www-data /var/www/html/ && \
   rm -rf /tmp/* && \
   apt remove -y jq unzip && \
