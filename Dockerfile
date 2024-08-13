@@ -80,6 +80,9 @@ RUN \
 RUN a2enmod remoteip && \
   #sed -E -i 's/(LogFormat.+)%h(.+)/\1%a\2/g' /etc/apache2/apache2.conf && \
   #sed -E -i 's/(LogFormat.+)%h(.+)/\1%{X-Forwarded-For}i\2/g' /etc/apache2/apache2.conf && \
+  sed -E -i 's,(Listen.+)80,\1[::]:80,g' /etc/apache2/ports.conf && \
+  sed -E -i 's,(Listen.+)443,\1[::]:443,g' /etc/apache2/ports.conf && \
+  sed -E -i 's,(<VirtualHost.+)\*:80(.+),\1[::]:80\2,g' /etc/apache2/sites-enabled/000-default.conf && \
   echo 'RemoteIPHeader X-Real-Ip' >> /etc/apache2/conf-available/remoteip.conf && \
   echo 'RemoteIPHeader X-Client-Ip' >> /etc/apache2/conf-available/remoteip.conf && \
   echo 'RemoteIPInternalProxy 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8' >> /etc/apache2/conf-available/remoteip.conf && \
