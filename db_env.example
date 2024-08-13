@@ -1,0 +1,6 @@
+TZ=America/Sao_Paulo
+MARIADB_AUTO_UPGRADE=true
+MARIADB_ROOT_PASSWORD=projectsend
+MARIADB_USER=projectsend
+MARIADB_PASSWORD=projectsend
+MARIADB_DATABASE=projectsend

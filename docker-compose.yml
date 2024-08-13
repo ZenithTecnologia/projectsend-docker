@@ -1,20 +1,22 @@
-version: "3.0"
 services:
   web:
     restart: unless-stopped
-    image: projectsend:r1335
+    image: localhost/projectsend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: projectsend_env
     volumes:
-      - /opt/projectsend/config:/config
-      - /opt/projectsend/data:/data
+      - /srv/projectsend/config:/config
+      - /srv/projectsend/data:/data
     ports:
-      - "8080:80"
-  mysql:
+      - "8081:80"
+
+  mariadb:
     restart: unless-stopped
-    image: mariadb:10.7
+    image: docker.io/library/mariadb:lts-ubi
     volumes:
-      - /opt/mariadb_data:/var/lib/mysql
+      - /srv/projectsend/db:/var/lib/mysql
+    env_file: db_env
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: projectsend
-      MYSQL_USER: projectsend
-      MYSQL_PASSWORD: projectsend
+      TZ: America/Sao_Paulo

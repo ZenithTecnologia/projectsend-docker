@@ -4,9 +4,7 @@ echo "Populating mounted upload-dir"
 mkdir -p /data/projectsend \
          /config/projectsend
 
-PREV_DIR=$(pwd)
-
-cd /defaults/upload || exit
+pushd /defaults/upload || exit
 shopt -s globstar nullglob
 shopt -s dotglob
 	for i in *
@@ -20,7 +18,7 @@ shopt -s dotglob
 shopt -u globstar nullglob
 shopt -u dotglob
 
-cd "${PREV_DIR}" || exit
+popd || exit
 
 # create symlinks
 [[ ! -L /var/www/html/upload ]] && \
@@ -39,4 +37,4 @@ chown www-data:www-data \
 chown -R www-data:www-data \
 	/config
 	
-  apache2-foreground
+apache2-foreground
