@@ -1,4 +1,4 @@
-FROM php:8-apache
+FROM docker.io/library/php:8-apache
 LABEL maintainer="Leonardo Amaral"
 LABEL original_mantainer="Sebastian Goetsch"
 
@@ -44,11 +44,6 @@ RUN docker-php-ext-install -j$(nproc) pdo_mysql
 RUN docker-php-ext-install -j$(nproc) gettext
 RUN docker-php-ext-install -j$(nproc) fileinfo
 
-RUN echo 'memory_limit = 512M' >> /usr/local/etc/php/conf.d/projectsend.ini;
-RUN echo 'post_max_size = 4096M' >> /usr/local/etc/php/conf.d/projectsend.ini;
-RUN echo 'upload_max_size = 4096M' >> /usr/local/etc/php/conf.d/projectsend.ini;
-RUN echo 'max_execution_time = 1800' >> /usr/local/etc/php/conf.d/projectsend.ini;
-
 RUN \
   apt update && \ 
   apt install -y jq catatonit unzip && \
@@ -87,6 +82,9 @@ RUN a2enmod remoteip && \
   echo 'RemoteIPHeader X-Client-Ip' >> /etc/apache2/conf-available/remoteip.conf && \
   echo 'RemoteIPInternalProxy 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8' >> /etc/apache2/conf-available/remoteip.conf && \
   a2enconf remoteip
+
+RUN echo 'memory_limit = 512M\npost_max_size = 4096M\nupload_max_size = 4096M\nmax_execution_time = 1800' > /usr/local/etc/php/conf.d/projectsend.ini && \
+  echo '[global]\nerror_log = /proc/self/fd/2\n\n[www]\naccess.log = /proc/self/fd/2\n\ncatch_workers_output = yes\ndecorate_workers_output = no' > /usr/local/etc/php/conf.d/docker-log.conf
 
 RUN mkdir -p /defaults/ && \
  mv /var/www/html/upload /defaults/
