@@ -84,7 +84,7 @@ RUN a2enmod remoteip && \
   a2enconf remoteip
 
 RUN echo 'memory_limit = 512M\npost_max_size = 4096M\nupload_max_size = 4096M\nmax_execution_time = 1800' > /usr/local/etc/php/conf.d/projectsend.ini && \
-  echo '[global]\nerror_log = /proc/self/fd/2\n\n[www]\naccess.log = /proc/self/fd/2\n\ncatch_workers_output = yes\ndecorate_workers_output = no' > /usr/local/etc/php/conf.d/docker-log.conf
+  echo '[global]\nerror_log = /dev/stderr\n\n[www]\naccess.log = /dev/stdout\n\ncatch_workers_output = yes\ndecorate_workers_output = no' > /usr/local/etc/php/conf.d/docker-log.conf
 
 RUN mkdir -p /defaults/ && \
  mv /var/www/html/upload /defaults/
