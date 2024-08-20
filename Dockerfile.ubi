@@ -1,0 +1,36 @@
+FROM docker.io/library/debian:stable-slim AS downloader
+
+RUN apt update && \
+  apt install -y curl jq catatonit unzip && \
+  if [ -z ${PROJECTSEND_VERSION+x} ]; then \
+    PROJECTSEND_VERSION=$(curl -s https://api.github.com/repos/projectsend/projectsend/releases/latest | jq -r '. | .tag_name'); \
+  fi && \
+  curl -fso \
+    /tmp/projectsend.zip -L \
+    "https://github.com/projectsend/projectsend/releases/download/${PROJECTSEND_VERSION}/projectsend-${PROJECTSEND_VERSION}.zip" || \
+  curl -fso \
+    /tmp/projectsend.zip -L \
+    "https://github.com/projectsend/projectsend/releases/download/${PROJECTSEND_VERSION}/projectsend.zip" && \
+  unzip \
+    /tmp/projectsend.zip -d \
+    /tmp/src && \
+\
+  for lang in zh_CN cs nl fr de it_IT pl pt_BR ru es sw tr vi_VN; do \
+    curl -fso /tmp/${lang}.zip -L "https://www.projectsend.org/translations/get.php?lang=${lang}" && \
+    unzip -o /tmp/${lang}.zip -d /tmp/src ; \
+  done
+
+RUN mkdir /tmp/php.d && \
+  echo 'memory_limit = 512M\npost_max_size = 4096M\nupload_max_size = 4096M\nmax_execution_time = 1800' > /tmp/php.d/projectsend.ini && \
+  echo '[global]\nerror_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT\nlog_errors = 1\ndisplay_errors = 0' > /tmp/php.d/docker-log.ini
+
+FROM registry.access.redhat.com/ubi9/php-81:latest
+COPY --from=downloader --chown=1001:0 /tmp/src /tmp/src
+COPY --from=downloader --chown=1001:0 /tmp/php.d /etc/php.d
+COPY ./start-ubi.sh ./php-pre-start/projectsend_parameters.sh
+
+RUN mkdir -p /tmp/src/defaults/ && \
+ mv /tmp/src/upload /tmp/src/defaults/
+
+RUN /usr/libexec/s2i/assemble
+CMD /usr/libexec/s2i/run

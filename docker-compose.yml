@@ -4,19 +4,29 @@ services:
     image: localhost/projectsend:latest
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.ubi
     env_file: projectsend_env
     healthcheck:
-      test: curl --silent --output /dev/null --fail http://127.0.0.1 || exit 1
+      # PHP official image
+      #test: curl --silent --output /dev/null --fail --user-agent "Docker HealthCheck" "http://127.0.0.1" || exit 1
+      # PHP UBI image
+      test: curl --silent --output /dev/null --fail --user-agent "Docker HealthCheck" "http://127.0.0.1:8080" || exit 1
       interval: 60s
       retries: 5
       start_period: 20s
       timeout: 10s
     volumes:
-      - /srv/projectsend/config:/config
-      - /srv/projectsend/data:/data
+      # PHP official image
+      #- /srv/projectsend/config:/config
+      #- /srv/projectsend/data:/data
+      # PHP UBI image
+      - /srv/projectsend/config:/opt/app-root/src/container_rw/config
+      - /srv/projectsend/data:/opt/app-root/src/container_rw/data
     ports:
-      - "8081:80"
+      # PHP official image
+      # - "8081:80"
+      # PHP UBI image
+      - "8081:8080"
 
   mariadb:
     restart: unless-stopped

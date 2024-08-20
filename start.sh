@@ -36,5 +36,5 @@ chown www-data:www-data \
 
 chown -R www-data:www-data \
 	/config
-	
+
 apache2-foreground
