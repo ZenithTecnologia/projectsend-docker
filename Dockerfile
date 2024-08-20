@@ -1,4 +1,4 @@
-FROM docker.io/library/php:8.1-apache
+FROM docker.io/library/php:8-apache
 LABEL maintainer="Leonardo Amaral"
 LABEL original_mantainer="Sebastian Goetsch"
 
