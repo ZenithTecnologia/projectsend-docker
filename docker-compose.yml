@@ -6,6 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file: projectsend_env
+    healthcheck:
+      test: curl --silent --output /dev/null --fail http://127.0.0.1 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
     volumes:
       - /srv/projectsend/config:/config
       - /srv/projectsend/data:/data
@@ -15,6 +21,13 @@ services:
   mariadb:
     restart: unless-stopped
     image: docker.io/library/mariadb:lts-ubi
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
     volumes:
       - /srv/projectsend/db:/var/lib/mysql
     env_file: db_env

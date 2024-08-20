@@ -91,8 +91,7 @@ RUN mkdir -p /defaults/ && \
 
 COPY --chmod=0755 start.sh /docker-entrypoint.sh
 
+EXPOSE 80
 ENTRYPOINT [ "/usr/bin/catatonit", "--" ]
-
 CMD ["/bin/bash", "/docker-entrypoint.sh"]
 
-EXPOSE 80
