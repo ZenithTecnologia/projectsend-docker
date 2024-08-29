@@ -59,4 +59,4 @@ RUN /usr/libexec/s2i/assemble
 FROM registry.access.redhat.com/ubi9/php-82:latest AS final
 COPY --from=build /opt /opt
 
-CMD /usr/libexec/s2i/run
+CMD [ '/usr/libexec/s2i/run' ]
