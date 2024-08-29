@@ -32,5 +32,8 @@ COPY ./start-ubi.sh ./php-pre-start/projectsend_parameters.sh
 RUN mkdir -p /tmp/src/defaults/ && \
  mv /tmp/src/upload /tmp/src/defaults/
 
+RUN cd /tmp/src && \
+    composer update cocur/slugify
+
 RUN /usr/libexec/s2i/assemble
 CMD /usr/libexec/s2i/run
