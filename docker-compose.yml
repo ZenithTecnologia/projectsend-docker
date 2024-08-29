@@ -2,6 +2,7 @@ services:
   web:
     restart: unless-stopped
     image: localhost/projectsend:latest
+    init: true
     build:
       context: .
       dockerfile: Dockerfile.ubi
@@ -32,6 +33,7 @@ services:
   mariadb:
     restart: unless-stopped
     image: docker.io/library/mariadb:lts-ubi
+    init: true
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       start_period: 1m
