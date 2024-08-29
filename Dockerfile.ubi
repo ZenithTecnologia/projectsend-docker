@@ -34,6 +34,19 @@ RUN mkdir -p /tmp/src/defaults/ && \
  mv /tmp/src/upload /tmp/src/defaults/
 
 RUN cd /tmp/src && /usr/bin/composer update
+RUN cat <<EOF >> /opt/app-root/src/.htaccess 
+<IfModule mod_headers.c>
+  Header set Strict-Transport-Security "max-age=31536000" env=HTTPS
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header setifempty Referrer-Policy: same-origin
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Permitted-Cross-Domain-Policies "none"
+  Header set Referrer-Policy "no-referrer"
+  Header set X-Content-Type-Options: nosniff
+  ServerSignature Off
+</IfModule>
+EOF
+
 RUN /usr/libexec/s2i/assemble
 
 CMD /usr/libexec/s2i/run
