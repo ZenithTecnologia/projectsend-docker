@@ -20,6 +20,7 @@ services:
       #- /srv/projectsend/config:/config
       #- /srv/projectsend/data:/data
       # PHP UBI image
+      - projectsend-sessions:/tmp/sessions/
       - /srv/projectsend/config:/opt/app-root/src/container_rw/config
       - /srv/projectsend/data:/opt/app-root/src/container_rw/data
     ports:
@@ -43,3 +44,6 @@ services:
     env_file: db_env
     environment:
       TZ: America/Sao_Paulo
+
+volumes:
+  projectsend-sessions:
