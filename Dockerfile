@@ -72,6 +72,19 @@ RUN \
   apt clean -y && \
   rm -rf /var/lib/apt/lists/*
 
+RUN cat <<EOF >> /var/www/html/.htaccess
+<IfModule mod_headers.c>
+  Header set Strict-Transport-Security "max-age=31536000" env=HTTPS
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header setifempty Referrer-Policy: same-origin
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Permitted-Cross-Domain-Policies "none"
+  Header set Referrer-Policy "no-referrer"
+  Header set X-Content-Type-Options: nosniff
+  ServerSignature Off
+</IfModule>
+EOF
+
 RUN a2enmod remoteip && \
   #sed -E -i 's/(LogFormat.+)%h(.+)/\1%a\2/g' /etc/apache2/apache2.conf && \
   #sed -E -i 's/(LogFormat.+)%h(.+)/\1%{X-Forwarded-For}i\2/g' /etc/apache2/apache2.conf && \
@@ -83,7 +96,7 @@ RUN a2enmod remoteip && \
   echo 'RemoteIPInternalProxy 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8' >> /etc/apache2/conf-available/remoteip.conf && \
   a2enconf remoteip
 
-RUN echo 'memory_limit = 512M\npost_max_size = 4096M\nupload_max_size = 4096M\nmax_execution_time = 1800' > /usr/local/etc/php/conf.d/projectsend.ini && \
+RUN echo '[global]\nmemory_limit = 512M\npost_max_size = 4096M\nupload_max_size = 4096M\nmax_execution_time = 1800' > /usr/local/etc/php/conf.d/projectsend.ini && \
   echo '[global]\nerror_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT\nlog_errors = 1\ndisplay_errors = 0' > /usr/local/etc/php/conf.d/docker-log.ini
 
 RUN mkdir -p /defaults/ && \
