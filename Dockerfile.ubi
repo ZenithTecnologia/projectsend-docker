@@ -27,13 +27,13 @@ RUN mkdir /tmp/php.d && \
 FROM registry.access.redhat.com/ubi9/php-82:latest
 COPY --from=downloader --chown=1001:0 /tmp/src /tmp/src
 COPY --from=downloader --chown=1001:0 /tmp/php.d /etc/php.d
+COPY --from=docker.io/library/composer:lts /usr/bin/composer /usr/bin/composer
 COPY ./start-ubi.sh ./php-pre-start/projectsend_parameters.sh
 
 RUN mkdir -p /tmp/src/defaults/ && \
  mv /tmp/src/upload /tmp/src/defaults/
 
-RUN cd /tmp/src && \
-    composer update cocur/slugify
-
+RUN cd /tmp/src && /usr/bin/composer update
 RUN /usr/libexec/s2i/assemble
+
 CMD /usr/libexec/s2i/run
