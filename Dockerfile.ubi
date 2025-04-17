@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/php-82:latest AS downloader
+FROM registry.access.redhat.com/ubi9/php-81:latest AS downloader
 
 USER 0
 RUN dnf install -y curl-minimal jq unzip
@@ -33,7 +33,7 @@ RUN mkdir /tmp/composer_temp && \
     cd /tmp/src && \
     php /tmp/composer_temp/composer.phar update
 
-FROM registry.access.redhat.com/ubi9/php-82:latest AS build
+FROM registry.access.redhat.com/ubi9/php-81:latest AS build
 COPY --from=downloader --chown=1001:0 /tmp/src /tmp/src
 COPY --from=downloader --chown=1001:0 /tmp/php.d /etc/php.d
 COPY ./start-ubi.sh ./php-pre-start/projectsend_parameters.sh
@@ -56,7 +56,7 @@ EOF
 
 RUN /usr/libexec/s2i/assemble
 
-FROM registry.access.redhat.com/ubi9/php-82:latest AS final
+FROM registry.access.redhat.com/ubi9/php-81:latest AS final
 COPY --from=build /opt /opt
 
 CMD /usr/libexec/s2i/run
