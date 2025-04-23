@@ -1,17 +1,17 @@
 #!/bin/bash
 echo "Populating mounted upload-dir"
 
-mkdir -p /data/projectsend \
-         /config/projectsend
+mkdir -p /opt/app-root/src/container_rw/data/projectsend \
+         /opt/app-root/src/container_rw/config/projectsend
 
-pushd /defaults/upload || exit
+pushd /opt/app-root/src/defaults/upload || exit
 shopt -s globstar nullglob
 shopt -s dotglob
 	for i in *
 	do
-		if [ ! -e "/data/projectsend/${i}" ] ; then
-		cp -R "${i}" "/data/projectsend/${i}"
-		chown www-data:www-data "/data/projectsend/${i}"
+		if [ ! -e "/opt/app-root/src/container_rw/data/projectsend/${i}" ] ; then
+		cp -R "${i}" "/opt/app-root/src/container_rw/data/projectsend/${i}"
+		chown 1001:0 "/opt/app-root/src/container_rw/data/projectsend/${i}"
 		fi
 	done
 
@@ -21,20 +21,10 @@ shopt -u dotglob
 popd || exit
 
 # create symlinks
-[[ ! -L /var/www/html/upload ]] && \
-	ln -sf /data/projectsend /var/www/html/upload
-[[ -f /var/www/html/includes/sys.config.php ]] && \
-	rm /var/www/html/includes/sys.config.php
-[[ ! -L /var/www/html/includes/sys.config.php ]] && \
-	ln -sf /config/projectsend/sys.config.php \
-	/var/www/html/includes/sys.config.php
-
-# permissions
-chown www-data:www-data \
-	/data \
-	/data/projectsend
-
-chown -R www-data:www-data \
-	/config
-
-apache2-foreground
+[[ ! -L /opt/app-root/src/upload ]] && \
+	ln -sf /opt/app-root/src/container_rw/data/projectsend /opt/app-root/src/upload
+[[ -f /opt/app-root/src/includes/sys.config.php ]] && \
+	rm /opt/app-root/src/includes/sys.config.php
+[[ ! -L /opt/app-root/src/includes/sys.config.php ]] && \
+	ln -sf /opt/app-root/src/container_rw/config/projectsend/sys.config.php \
+	/opt/app-root/src/includes/sys.config.php
