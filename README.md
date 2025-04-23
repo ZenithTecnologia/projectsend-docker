@@ -1,42 +1,36 @@
 # projectsend-docker
 
-Creates a docker image for projectsend. (https://www.projectsend.org/)
+[![Container Build - Upstream Last Stable](https://github.com/ZenithTecnologia/projectsend-docker/actions/workflows/docker-publish-laststable.yml/badge.svg)](https://github.com/ZenithTecnologia/projectsend-docker/actions/workflows/docker-publish-laststable.yml) [![Container Build - Upstream develop](https://github.com/ZenithTecnologia/projectsend-docker/actions/workflows/docker-publish-develop.yml/badge.svg)](https://github.com/ZenithTecnologia/projectsend-docker/actions/workflows/docker-publish-develop.yml)
 
-Influenced by https://github.com/linuxserver/docker-projectsend.
+Creates a docker image for [projectsend](https://www.projectsend.org/).
 
-# About
+Influenced by https://github.com/terrestris/projectsend-docker.
 
-This image is based on "php:7-apache" and projectsend r1295.
+# Features
 
-See Dockerfile for more infos.
+* Image features [UBI](https://catalog.redhat.com/software/base-images) base images, turning it compliance for business environment.
+* Builds develop and latest stable release weekly to update codebase and UBI platform.
+* Hosted on Github registry.
 
 # Usage
 
-You can use the supplied docker-compose.yml:
+You can use the supplied `docker-compose.yml` as base and write you own `docker-compose.override.yml` to adapt to you environment. An example of `docker-compose.override.yml` that unpublish the ports to allow host it behind a reverse proxy with 4 replicas and [Ofelia](https://github.com/mcuadros/ofelia) as cron executor:
 
-    version: "3.0"
-    services:
-      web:
-        restart: unless-stopped
-        image: terrestris/projectsend:latest
-        volumes:
-          - /opt/projectsend/config:/config
-          - /opt/projectsend/data:/data
-        ports:
-          - "8080:80"
-      mysql:
-        restart: unless-stopped
-        image: mariadb:10.5
-        volumes:
-          - /opt/mariadb_data:/var/lib/mysql
-        environment:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: projectsend
-          MYSQL_USER: projectsend
-          MYSQL_PASSWORD: projectsend
+```yaml
+services:
+  web:
+    ports: !reset
+    deploy:
+      replicas: 4
+    labels:
+      - "autoheal=true"
+      - "ofelia.enabled=true"
+      - "ofelia.job-exec.projectsend-cron.schedule=@every 5m"
+      - "ofelia.job-exec.projectsend-cron.command=/usr/bin/php /opt/app-root/src/cron.php key=<YOUR_KEY_HERE>"
+
+      - "traefik.enable=true"
+```
 
 If you have your own MySQL-DB you can of course use that as well.
 
-After starting the compose-file you can access projectsend on http://localhost:8080.
-
-You should see the install-script where you have to enter the database-credentials etc.  After that, you're good to go.
+On first access, you should see the install-script where you have to enter the database-credentials etc.  After that, you're good to go.
