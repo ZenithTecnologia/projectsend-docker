@@ -27,7 +27,7 @@ RUN mkdir /tmp/translations \
  && curl -fL --remote-name --remote-header-name --output-dir /tmp/translations https://www.projectsend.org/translations/get.php?lang={$(for lang in zh_CN de es tr ru it_IT pt_BR cs nl fr pl sw vi_VN pt_PT ja; do echo -n "${lang},"; done | sed 's/.$//')}
 
 RUN for translation in /tmp/translations/*; do \
-    unzip -o ${translation} -d /tmp/src ; \
+    unzip -o ${translation} -d /tmp/projectsend ; \
   done
 
 RUN mkdir /tmp/php.d && \
