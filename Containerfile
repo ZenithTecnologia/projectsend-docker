@@ -5,7 +5,7 @@ ARG BRANCH=develop
 USER 0
 RUN dnf --setopt=install_weak_deps=0 --noplugins --nodocs -y install git-core
 USER 1001
-RUN git clone --single-branch --depth=1 --branch=${BRANCH} https://github.com/projectsend/projectsend.git /tmp/projectsend
+RUN git clone --single-branch --depth=1 --branch=${BRANCH} https://github.com/ZenithTecnologia/projectsend.git /tmp/projectsend
 
 # -- Build node modules
 FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest AS nodejs-build
