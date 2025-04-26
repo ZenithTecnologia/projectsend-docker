@@ -1,7 +1,7 @@
 services:
   web:
     restart: unless-stopped
-    image: localhost/projectsend:latest
+    image: ghcr.io/zenithtecnologia/projectsend-docker:develop
     init: true
     build:
       context: .
