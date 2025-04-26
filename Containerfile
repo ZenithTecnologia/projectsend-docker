@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/php-82:latest as projectsend-source
+FROM registry.access.redhat.com/ubi9/php-82:latest AS projectsend-source
 
 ARG BRANCH=develop
 
@@ -80,4 +80,4 @@ RUN /usr/libexec/s2i/assemble
 FROM registry.access.redhat.com/ubi9/php-82:latest AS runtime
 COPY --from=php-assemble /opt /opt
 
-CMD /usr/libexec/s2i/run
+CMD ['/usr/libexec/s2i/run']
