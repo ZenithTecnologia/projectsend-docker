@@ -57,7 +57,7 @@ RUN gulp prod
 FROM registry.access.redhat.com/ubi9/php-82:latest AS php-assemble
 COPY --from=gulp-build --chown=1001:1001 /tmp/projectsend /tmp/src
 COPY --from=php-prepare --chown=1001:1001 /tmp/php.d /etc/php.d
-COPY ./start.sh ./php-pre-start/tmp/projectsend_parameters.sh
+COPY ./start.sh ./php-pre-start/projectsend_parameters.sh
 
 RUN mkdir -p /tmp/src/defaults/ && \
  mv /tmp/src/upload /tmp/src/defaults/
