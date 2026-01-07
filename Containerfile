@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/php-82:latest AS projectsend-source
+FROM registry.access.redhat.com/ubi10/php-83:latest AS projectsend-source
 
 ARG BRANCH=develop
 
@@ -8,7 +8,7 @@ USER 1001
 RUN git clone --single-branch --depth=1 --branch=${BRANCH} https://github.com/ZenithTecnologia/projectsend.git /tmp/projectsend
 
 # -- Build node modules
-FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest AS nodejs-build
+FROM registry.access.redhat.com/ubi10/nodejs-24-minimal:latest AS nodejs-build
 COPY --from=projectsend-source --chown=1001:1001 /tmp/projectsend /tmp/projectsend
 
 WORKDIR /tmp/projectsend
@@ -16,7 +16,7 @@ WORKDIR /tmp/projectsend
 RUN npm install --include=dev
 
 # -- Assemble built package
-FROM registry.access.redhat.com/ubi9/php-82:latest AS php-prepare
+FROM registry.access.redhat.com/ubi10/php-83:latest AS php-prepare
 
 USER 0
 RUN dnf install -y curl-minimal unzip
@@ -43,7 +43,7 @@ RUN mkdir /tmp/composer_temp \
  && php /tmp/composer_temp/composer.phar update
 
 # -- Build gulp modules
-FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest AS gulp-build
+FROM registry.access.redhat.com/ubi10/nodejs-24-minimal:latest AS gulp-build
 COPY --from=php-prepare --chown=1001:1001 /tmp/projectsend /tmp/projectsend
 
 WORKDIR /tmp/projectsend
@@ -54,7 +54,7 @@ RUN gulp prod
 
 # -- PHP runtime
 
-FROM registry.access.redhat.com/ubi9/php-82:latest AS php-assemble
+FROM registry.access.redhat.com/ubi10/php-83:latest AS php-assemble
 COPY --from=gulp-build --chown=1001:1001 /tmp/projectsend /tmp/src
 COPY --from=php-prepare --chown=1001:1001 /tmp/php.d /etc/php.d
 COPY ./start.sh ./php-pre-start/projectsend_parameters.sh
@@ -77,7 +77,7 @@ EOF
 
 RUN /usr/libexec/s2i/assemble
 
-FROM registry.access.redhat.com/ubi9/php-82:latest AS runtime
+FROM registry.access.redhat.com/ubi10/php-83:latest AS runtime
 COPY --from=php-assemble /opt /opt
 
 CMD [ "/usr/libexec/s2i/run" ]
