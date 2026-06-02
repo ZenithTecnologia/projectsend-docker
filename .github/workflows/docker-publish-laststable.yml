@@ -1,4 +1,4 @@
-name: Container Build - Upstream r1720
+name: Container Build - Upstream r2029
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -21,7 +21,7 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   # Upstream Tag
-  UPSTREAM_TAG: r1720
+  UPSTREAM_TAG: r2029
 
 jobs:
   build:
